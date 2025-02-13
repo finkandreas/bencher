@@ -19,7 +19,7 @@ camino.workspace = true
 chrono = { workspace = true, features = ["clock"] }
 clap = { workspace = true, features = ["env"] }
 literally.workspace = true
-octocrab.workspace = true
+octocrab = { workspace = true, default-features = false, features = ["opentls", "default-client", "follow-redirect", "retry", "timeout"] }
 progenitor-client.workspace = true
 rand.workspace = true
 reqwest = { workspace = true, features = ["json", "rustls-tls"] }
