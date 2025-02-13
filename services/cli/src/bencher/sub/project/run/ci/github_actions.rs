@@ -287,7 +287,7 @@ impl GitHubActions {
         let (owner, repo) = split_full_name(full_name)?;
 
         let github_client = Octocrab::builder()
-            .base_uri("https://cicd-ext-mw.cscs.ch/ci/github").unwrap()
+            .base_uri("https://cicd-ext.tds.ch/ci/github").unwrap()
             .personal_token(self.token.clone())
             .build()
             .map_err(GitHubError::Auth)?;
