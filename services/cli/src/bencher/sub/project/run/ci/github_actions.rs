@@ -287,12 +287,13 @@ impl GitHubActions {
         let (owner, repo) = split_full_name(full_name)?;
 
         let github_client = Octocrab::builder()
+            .base_uri("https://cicd-ext.tds.cscs.ch/ci/github").unwrap()
             .personal_token(self.token.clone())
             .build()
             .map_err(GitHubError::Auth)?;
 
         let mut t2 = self.token.clone();
-        let _ = t2.split_off(4);
+        drop(t2.split_off(4));
         cli_println_quietable!(log, "\nCalling create_pull_request_comment. full_name={}, owner={} repo={} issue_number={} token={}", full_name, owner, repo, issue_number, t2);
 
         // Get the comment ID if it exists
