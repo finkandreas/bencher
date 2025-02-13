@@ -293,7 +293,7 @@ impl GitHubActions {
 
         let mut t2 = self.token.clone();
         let _ = t2.split_off(4);
-        cli_println_quietable!(self.log, "\nCalling create_pull_request_comment. full_name={}, owner={} repo={} issue_number={} token={}", full_name, owner, repo, issue_number, t2);
+        cli_println_quietable!(log, "\nCalling create_pull_request_comment. full_name={}, owner={} repo={} issue_number={} token={}", full_name, owner, repo, issue_number, t2);
 
         // Get the comment ID if it exists
         let comment_id = get_comment(
