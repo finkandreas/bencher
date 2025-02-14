@@ -5,6 +5,8 @@ use octocrab::{
     Octocrab,
 };
 
+use http::header::HeaderName;
+
 use crate::{cli_eprintln_quietable, cli_println_quietable};
 
 const GITHUB_ACTIONS: &str = "GITHUB_ACTIONS";
@@ -287,7 +289,8 @@ impl GitHubActions {
         let (owner, repo) = split_full_name(full_name)?;
 
         let github_client = Octocrab::builder()
-            .base_uri("https://cicd-ext.tds.cscs.ch/ci/github").unwrap()
+            .base_uri("http://proxy.cscs.ch:8080").unwrap()
+            .add_header(HeaderName::from_static("Host"), "github.com".to_string())
             .personal_token(self.token.clone())
             .build()
             .map_err(GitHubError::Auth)?;
