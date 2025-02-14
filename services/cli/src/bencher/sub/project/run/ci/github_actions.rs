@@ -313,7 +313,7 @@ impl GitHubActions {
             .with_layer(&BaseUriLayer::new(Uri::from_static("https://api.github.com")))
             .with_layer(&ExtraHeadersLayer::new(Arc::new(vec![
                         (USER_AGENT, "octocrab".parse().unwrap()),
-//                        (AUTHORIZATION, format!("Bearer {}", self.token).parse().unwrap()),
+                        (AUTHORIZATION, format!("Bearer {}", self.token).parse().unwrap()),
             ])))
             .with_auth(octocrab::AuthState::None)
             .build()
