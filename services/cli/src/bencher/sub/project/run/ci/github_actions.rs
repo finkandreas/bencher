@@ -290,7 +290,7 @@ impl GitHubActions {
 
         let github_client = Octocrab::builder()
             .base_uri("http://proxy.cscs.ch:8080").unwrap()
-            .add_header(HeaderName::from_static("Host"), "github.com".to_string())
+            .add_header(HeaderName::from_static("host"), "github.com".to_string())
             .personal_token(self.token.clone())
             .build()
             .map_err(GitHubError::Auth)?;
