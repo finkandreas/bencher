@@ -309,12 +309,11 @@ impl GitHubActions {
         let client = Client::builder(TokioExecutor::new()).build(proxy);
 
         let github_client = OctocrabBuilder::new_empty()
-//            .personal_token(self.token.clone())
             .with_service(client)
             .with_layer(&BaseUriLayer::new(Uri::from_static("https://api.github.com")))
             .with_layer(&ExtraHeadersLayer::new(Arc::new(vec![
                         (USER_AGENT, "octocrab".parse().unwrap()),
-                        (AUTHORIZATION, format!("Bearer {}", self.token).parse().unwrap()),
+//                        (AUTHORIZATION, format!("Bearer {}", self.token).parse().unwrap()),
             ])))
             .with_auth(octocrab::AuthState::None)
             .build()
