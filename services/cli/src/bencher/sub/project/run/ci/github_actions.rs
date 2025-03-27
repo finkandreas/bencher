@@ -3,7 +3,20 @@ use octocrab::{
     models::CommentId,
     params::checks::{CheckRunConclusion, CheckRunOutput},
     Octocrab,
+    OctocrabBuilder,
+    service::middleware::base_uri::BaseUriLayer,
+    service::middleware::extra_headers::ExtraHeadersLayer,
 };
+
+use http::Uri;
+use http::header::USER_AGENT;
+use http::header::AUTHORIZATION;
+use std::sync::Arc;
+
+use hyper_http_proxy::{Proxy, ProxyConnector, Intercept};
+use hyper_util::client::legacy::connect::HttpConnector;
+use hyper_util::client::legacy::Client;
+use hyper_util::rt::TokioExecutor;
 
 use crate::{cli_eprintln_quietable, cli_println_quietable};
 
@@ -294,11 +307,25 @@ impl GitHubActions {
         let full_name = repository_full_name(event_str, event)?;
         let (owner, repo) = split_full_name(full_name)?;
 
-        let mut builder = Octocrab::builder().user_access_token(self.token.clone());
-        if let Some(url) = github_api_url(log) {
-            builder = builder.base_uri(url).map_err(GitHubError::BaseUri)?;
-        }
-        let github_client = builder.build().map_err(GitHubError::Auth)?;
+        let proxy = {
+           let proxy_uri = "http://proxy.cscs.ch:8080".parse().unwrap();
+           let proxy = Proxy::new(Intercept::All, proxy_uri);
+           let connector = HttpConnector::new();
+           let proxy_connector = ProxyConnector::from_proxy(connector, proxy).unwrap();
+           proxy_connector
+        };
+        let client = Client::builder(TokioExecutor::new()).build(proxy);
+
+        let github_client = OctocrabBuilder::new_empty()
+            .with_service(client)
+            .with_layer(&BaseUriLayer::new(Uri::from_static("https://api.github.com")))
+            .with_layer(&ExtraHeadersLayer::new(Arc::new(vec![
+                        (USER_AGENT, "octocrab".parse().unwrap()),
+                        (AUTHORIZATION, format!("Bearer {}", self.token).parse().unwrap()),
+            ])))
+            .with_auth(octocrab::AuthState::None)
+            .build()
+            .unwrap();
 
         // Get the comment ID if it exists
         let comment_id = get_comment(

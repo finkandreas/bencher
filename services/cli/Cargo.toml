@@ -41,6 +41,9 @@ url.workspace = true
 bollard = "0.18"
 futures-util = "0.3"
 gix = { version = "0.70", default-features = false, features = ["revision"] }
+http.workspace = true
+hyper-http-proxy = "1.0.0"
+hyper-util = { version = "0.1.10", features = ["client-legacy", "http1", "http2", "tokio"] }
 
 [lints]
 workspace = true
